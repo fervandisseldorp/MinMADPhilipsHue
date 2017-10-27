@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.fer.minmadphilipshue.domain.PhilipsHueLamp;
-import com.example.fer.minmadphilipshue.domain.State;
 
 import java.util.ArrayList;
 
@@ -17,10 +16,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     ArrayList<PhilipsHueLamp> lampArray = new ArrayList<>();
     ArrayAdapter<PhilipsHueLamp> adapter;
     ListView listview;
-    //String username = "iYrmsQq1wu5FxF9CPqpJCnm1GpPVylKBWDUsNDhB";
-    //String ipAdress = "145.48.205.33";
-    String ipAdress = "http://192.168.1.179/api";
-    String user = "lXPypsuuj4ujhAlXdZP2URMJpVZwqUS-HAMrojC0";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,15 +25,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_main);
         listview = (ListView) findViewById(R.id.listview);
 
+        getAllLamps();
+
         // Set adapter for listview
-        adapter = new PhilipsHueAdapter(getApplicationContext(), lampArray);
+        adapter = new PhilipsHueAdapter(getApplicationContext(), lampArray );
+        listview.setAdapter(adapter);
         listview.setOnItemClickListener((AdapterView.OnItemClickListener) this);
-//        State s = new State(false, 100, 100, 100);
-//        PhilipsHueLamp ph = new PhilipsHueLamp(s, "testtype", "testname", "modelid", "iswversion", "uniqueid");
-        fillLampArray();
+
+
     }
-
-
 
     @Override
     public void onLampAvailable(PhilipsHueLamp philipsHueLamp) {
@@ -47,26 +43,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        System.out.println("Clicked on button");
         Intent intent = new Intent(getApplicationContext(), LampDetailActivity.class);
 
         PhilipsHueLamp p = lampArray.get(i);
-        intent.putExtra("LAMP_OBJECT", p );
+        intent.putExtra("LAMP", p );
 
         startActivity(intent);
     }
 
 
-    void fillLampArray(){
-        lampArray = getAllLamps();
-    }
-
-    ArrayList<PhilipsHueLamp> getAllLamps(){
-        String[] url = new String[] { "http://192.168.1.179/api"};
+    public void getAllLamps(){
+        String[] url = new String[] { "http://192.168.1.179/api/lXPypsuuj4ujhAlXdZP2URMJpVZwqUS-HAMrojC0/lights"};
         AsyncActivity asyncActivity = new AsyncActivity(this);
         String[] urlParam;
         asyncActivity.execute(url);
 
-        return null;
     }
 }

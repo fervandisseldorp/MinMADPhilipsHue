@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.example.fer.minmadphilipshue.domain.PhilipsHueLamp;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,9 +12,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Iterator;
 
 import static android.content.ContentValues.TAG;
 
@@ -25,6 +24,7 @@ import static android.content.ContentValues.TAG;
 
 public class AsyncActivity extends AsyncTask<String, Void, String> {
     private OnLampAvailable listener;
+    private String getUrl = "http://192.168.1.179/api/lXPypsuuj4ujhAlXdZP2URMJpVZwqUS-HAMrojC0/lights";
 
     public AsyncActivity(OnLampAvailable listener){
         this.listener = listener;
@@ -32,8 +32,6 @@ public class AsyncActivity extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... strings) {
-        System.out.println("reached do in background");
-
 
         InputStream inputStream = null;
         BufferedReader reader = null;
@@ -41,7 +39,8 @@ public class AsyncActivity extends AsyncTask<String, Void, String> {
         String response = "";
 
         try {
-            URL url = new URL(strings[0]);
+            // URL url = new URL(strings[0]);
+            URL url = new URL(getUrl);
             URLConnection connection = url.openConnection();
 
             reader = new BufferedReader(
@@ -66,10 +65,11 @@ public class AsyncActivity extends AsyncTask<String, Void, String> {
             }
         }
 
+        System.out.println("response = " + response);
         return response;
     }
 
-
+    @Override
     protected void onPostExecute(String response) {
         // Check of er een response is
         if(response == null || response == "") {
@@ -81,23 +81,20 @@ public class AsyncActivity extends AsyncTask<String, Void, String> {
             // Top level json object
             jsonObject = new JSONObject(response);
             // Get all users and start looping
-            JSONArray lamps = jsonObject.getJSONArray("results");
-            for(int idx = 0; idx < lamps.length(); idx++) {
-                // array level objects and get user
-                JSONObject lamp = lamps.getJSONObject(idx);
+            Iterator<String> lampHeaders = jsonObject.keys();
 
-                // Get title, first and last name
-                JSONObject name = lamp.getJSONObject("name");
-                String title = name.getString("title");
-                String firstName = name.getString("first");
+            while(lampHeaders.hasNext()){
+                String id = lampHeaders.next();
+                JSONObject lampObject = jsonObject.getJSONObject(id);
+                    JSONObject lampState = lampObject.getJSONObject("state");
+                        boolean isOn = lampState.getBoolean("on");
+                        int bri = lampState.getInt("bri");
+                        int hue = lampState.getInt("hue");
+                        int sat = lampState.getInt("sat");
+                    String name = lampObject.getString("name");
 
-                // Create new Person object
-                PhilipsHueLamp p = new PhilipsHueLamp();
-                p.setName("testlamp");
-                //
-                // call back with new person data
-                //
-                listener.onLampAvailable(p);
+                PhilipsHueLamp lamp = new PhilipsHueLamp(id, isOn, bri, hue, sat, name);
+                listener.onLampAvailable( lamp );
 
             }
         } catch( JSONException ex) {

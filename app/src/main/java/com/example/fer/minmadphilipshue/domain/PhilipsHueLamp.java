@@ -7,73 +7,58 @@ import java.io.Serializable;
  */
 
 public class PhilipsHueLamp implements Serializable{
-    private State state;
-    private String type;
-    private String name;
-    private String modelid;
-    private String swversion;
-    private String uniqueid;
-    // private String pointsymbol;
+    private String id;
+    private boolean isOn;
+    private int bri;
+    private int hue;
+    private int sat;
 
 
-    public PhilipsHueLamp(){
-
+    public PhilipsHueLamp(String id, boolean isOn, int bri, int hue, int sat, String name){
+        this.id = id;
+        this.isOn = isOn;
+        this.bri = bri;
+        this.hue = hue;
+        this.sat = sat;
     }
 
-    public PhilipsHueLamp(State state, String type, String name, String modelid, String swversion, String uniqueid) {
-        this.state = state;
-        this.type = type;
-        this.name = name;
-        this.modelid = modelid;
-        this.swversion = swversion;
-        this.uniqueid = uniqueid;
+    public String getId() {
+        return id;
     }
 
-    public State getState() {
-        return state;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void setState(State state) {
-        this.state = state;
+    public boolean isOn() {
+        return isOn;
     }
 
-    public String getType() {
-        return type;
+    public void setOn(boolean on) {
+        isOn = on;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public int getBri() {
+        return bri;
     }
 
-    public String getName() {
-        return name;
+    public void setBri(int bri) {
+        this.bri = bri;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public int getHue() {
+        return hue;
     }
 
-    public String getModelid() {
-        return modelid;
+    public void setHue(int hue) {
+        this.hue = hue;
     }
 
-    public void setModelid(String modelid) {
-        this.modelid = modelid;
+    public int getSat() {
+        return sat;
     }
 
-    public String getSwversion() {
-        return swversion;
-    }
-
-    public void setSwversion(String swversion) {
-        this.swversion = swversion;
-    }
-
-    public String getUniqueid() {
-        return uniqueid;
-    }
-
-    public void setUniqueid(String uniqueid) {
-        this.uniqueid = uniqueid;
+    public void setSat(int sat) {
+        this.sat = sat;
     }
 }
